@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Register — E-Commerce Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--crimson:#9B1C1C;--gold:#C9961A;--gold-lt:#F4C842;--navy:#1A1A2E;--ivory:#FDFAF4;--cream:#F5EFE0;--border:#E8DFC8}
+body{font-family:'Outfit',sans-serif;min-height:100vh;display:flex;background:var(--ivory)}
+.left{width:380px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;justify-content:center;padding:60px 44px;position:relative;overflow:hidden}
+.left::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,150,26,.18),transparent 70%)}
+.left::after{content:'';position:absolute;bottom:-60px;left:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(155,28,28,.22),transparent 70%)}
+.lc{position:relative;z-index:1}
+.app-name{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:#fff;line-height:1.1}
+.app-name em{color:var(--gold-lt);font-style:normal}
+.divider-line{width:40px;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:99px;margin:22px 0}
+.step{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.step-num{width:26px;height:26px;border-radius:50%;background:rgba(201,150,26,.2);border:1.5px solid var(--gold);color:var(--gold-lt);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-text{font-size:.84rem;color:rgba(255,255,255,.6);line-height:1.5}
+.step-text strong{color:rgba(255,255,255,.9);display:block;font-size:.87rem}
+
+.right{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+.box{width:100%;max-width:400px}
+.box-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--navy);margin-bottom:4px}
+.box-sub{font-size:.84rem;color:#6B7280;margin-bottom:26px}
+.err-box{background:#fee2e2;color:#991b1b;padding:10px 14px;border-radius:8px;font-size:.84rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:5px}
+.fg input{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:.88rem;background:var(--cream);outline:none;transition:.18s}
+.fg input:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,150,26,.12)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-reg{width:100%;padding:11px;border:none;border-radius:9px;background:var(--crimson);color:#fff;font-family:'Outfit',sans-serif;font-size:.93rem;font-weight:600;cursor:pointer;transition:.18s}
+.btn-reg:hover{background:#7F1D1D;transform:translateY(-1px)}
+.link-row{text-align:center;margin-top:18px;font-size:.84rem;color:#6B7280}
+.link-row a{color:var(--crimson);font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="left">
+  <div class="lc">
+    <div class="app-name">E-Commerce<br/><em>Bazaar</em></div>
+    <div class="divider-line"></div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Create Your Account</strong>Fill in your details to register</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Browse Products</strong>Explore our catalogue</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Place Orders</strong>Order and pay in ₹ Indian Rupees</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Track Everything</strong>View your full order & payment history</div>
+    </div>
+  </div>
+</div>
+
+<div class="right">
+  <div class="box">
+    <div class="box-title">Create Account</div>
+    <div class="box-sub">Register to start shopping</div>
+    {% if err %}<div class="err-box"><i class="fa-solid fa-exclamation-circle"></i>{{ err }}</div>{% endif %}
+    <form method="POST">
+      <div class="fg"><label>Full Name *</label><input name="user_name" placeholder="Ananya Sharma" required/></div>
+      <div class="frow">
+        <div class="fg"><label>Email *</label><input name="email" type="email" placeholder="you@example.com" required/></div>
+        <div class="fg"><label>Phone</label><input name="phone" placeholder="9876543210"/></div>
+      </div>
+      <div class="fg"><label>Password * (min 6 chars)</label><input name="password" type="password" placeholder="••••••••" required/></div>
+      <button type="submit" class="btn-reg"><i class="fa-solid fa-user-plus"></i> &nbsp;Create Account</button>
+    </form>
+    <div class="link-row">Already have an account? <a href="/">Login here</a></div>
+  </div>
+</div>
+</body>
+</html>

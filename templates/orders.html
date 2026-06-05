@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Orders — E-Commerce Bazaar{% endblock %}
+{% block page_title %}{% if session.role=='admin' %}All Orders{% else %}My Order History{% endif %}{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div class="card-hd">
+    <h2>
+      <i class="fa-solid fa-cart-shopping"></i>
+      {% if session.role=='admin' %}All Orders{% else %}My Orders{% endif %}
+      <span class="rec-count">({{ orders|length }} records)</span>
+    </h2>
+    {% if session.role != 'admin' %}
+    <a href="/products" class="btn btn-gold btn-sm"><i class="fa-solid fa-bag-shopping"></i> Shop More</a>
+    {% endif %}
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#Order ID</th>
+          {% if session.role=='admin' %}<th>Customer</th><th>Email</th>{% endif %}
+          <th>Product</th><th>Qty</th><th>Total (₹)</th>
+          <th>Order Date</th><th>Status</th>
+          {% if session.role=='admin' %}<th>Update Status</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td class="mono">#{{ o.order_id }}</td>
+          {% if session.role=='admin' %}
+          <td>
+            <div class="av-cell">
+              <div class="av">{{ o.user_name[0].upper() }}</div>
+              {{ o.user_name }}
+            </div>
+          </td>
+          <td style="color:var(--gray);font-size:.82rem">{{ o.email }}</td>
+          {% endif %}
+          <td><strong>{{ o.product_name }}</strong></td>
+          <td>{{ o.quantity }}</td>
+          <td class="amt">₹{{ "{:,.0f}".format(o.total_amt) }}</td>
+          <td style="color:var(--gray);font-size:.83rem">{{ o.order_date[:16] }}</td>
+          <td><span class="badge b-{{ o.status|lower }}">{{ o.status }}</span></td>
+          {% if session.role=='admin' %}
+          <td>
+            <form method="POST" action="/orders/update/{{ o.order_id }}" class="inline-form">
+              <select name="status">
+                {% for s in ['Pending','Processing','Shipped','Delivered','Cancelled'] %}
+                <option value="{{ s }}" {% if s==o.status %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr class="empty">
+          <td colspan="{% if session.role=='admin' %}9{% else %}7{% endif %}">
+            {% if session.role != 'admin' %}No orders yet. <a href="/products" style="color:var(--crimson)">Browse products →</a>{% else %}No orders yet.{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

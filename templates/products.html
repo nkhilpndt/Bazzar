@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Products — E-Commerce Bazaar{% endblock %}
+{% block page_title %}Products{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div class="card-hd">
+    <h2><i class="fa-solid fa-box-open"></i> Product Catalogue <span class="rec-count">({{ products|length }} items)</span></h2>
+    {% if session.role=='admin' %}
+    <button class="btn btn-primary btn-sm" onclick="openModal('addProd')">
+      <i class="fa-solid fa-plus"></i> Add Product
+    </button>
+    {% endif %}
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Product Name</th><th>Description</th>
+          <th>Price (₹)</th><th>Stock</th>
+          {% if session.role!='admin' %}<th>Order</th>{% else %}<th>Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td class="mono">#{{ p.product_id }}</td>
+          <td>
+            <div class="av-cell">
+              <div style="width:30px;height:30px;border-radius:8px;background:rgba(155,28,28,.09);display:flex;align-items:center;justify-content:center;color:var(--crimson);flex-shrink:0">
+                <i class="fa-solid fa-box" style="font-size:.8rem"></i>
+              </div>
+              <strong>{{ p.product_name }}</strong>
+            </div>
+          </td>
+          <td style="color:var(--gray);font-size:.83rem;max-width:180px">{{ p.description or '—' }}</td>
+          <td class="amt">₹{{ "{:,.0f}".format(p.price) }}</td>
+          <td>
+            {% if p.stock > 50 %}<span class="badge b-delivered">{{ p.stock }}</span>
+            {% elif p.stock > 10 %}<span class="badge b-processing">{{ p.stock }}</span>
+            {% else %}<span class="badge b-pending">{{ p.stock }} low</span>{% endif %}
+          </td>
+          <td>
+            {% if session.role != 'admin' %}
+              {% if p.stock > 0 %}
+              <button class="btn btn-gold btn-sm" onclick="openModal('order_{{ p.product_id }}')">
+                <i class="fa-solid fa-cart-plus"></i> Order
+              </button>
+              {% else %}
+              <span class="badge b-pending">Out of Stock</span>
+              {% endif %}
+            {% else %}
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-outline btn-sm" onclick="openModal('edit_{{ p.product_id }}')">
+                <i class="fa-solid fa-pen"></i> Edit
+              </button>
+              <a href="/products/delete/{{ p.product_id }}"
+                 onclick="return confirm('Delete {{ p.product_name }}?')"
+                 class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+            </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr class="empty"><td colspan="6">No products available.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── ORDER MODALS (per product, for users) ── -->
+{% if session.role != 'admin' %}
+{% for p in products %}
+{% if p.stock > 0 %}
+<div class="modal-overlay" id="order_{{ p.product_id }}">
+  <div class="modal">
+    <h3><i class="fa-solid fa-cart-plus"></i> Place Order</h3>
+    <p style="font-size:.87rem;color:var(--gray);margin-bottom:16px">
+      <strong style="color:var(--navy)">{{ p.product_name }}</strong><br/>
+      ₹{{ "{:,.0f}".format(p.price) }} per unit &nbsp;·&nbsp; {{ p.stock }} in stock
+    </p>
+    <form method="POST" action="/orders/place/{{ p.product_id }}">
+      <div class="frow">
+        <div class="fg">
+          <label>Quantity</label>
+          <input name="quantity" type="number" min="1" max="{{ p.stock }}" value="1" required
+                 oninput="updateTotal({{ p.price }}, this.value, 'tot_{{ p.product_id }}')"/>
+        </div>
+        <div class="fg">
+          <label>Total</label>
+          <input id="tot_{{ p.product_id }}" readonly value="₹{{ '{:,.0f}'.format(p.price) }}"
+                 style="background:#f5f5f5;font-weight:700;color:var(--green)"/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Payment Method</label>
+        <select name="payment_method">
+          <option value="UPI">UPI</option>
+          <option value="Net Banking">Net Banking</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="Debit Card">Debit Card</option>
+          <option value="Cash on Delivery">Cash on Delivery</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal('order_{{ p.product_id }}')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Confirm Order</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+<!-- ── ADD PRODUCT MODAL (admin) ── -->
+{% if session.role=='admin' %}
+<div class="modal-overlay" id="addProd">
+  <div class="modal">
+    <h3><i class="fa-solid fa-box-open"></i> Add New Product</h3>
+    <form method="POST" action="/products/add">
+      <div class="fg"><label>Product Name *</label><input name="product_name" placeholder="e.g. OnePlus 12" required/></div>
+      <div class="fg"><label>Description</label><input name="description" placeholder="Short description"/></div>
+      <div class="frow">
+        <div class="fg"><label>Price (₹) *</label><input name="price" type="number" step="0.01" min="0" placeholder="999" required/></div>
+        <div class="fg"><label>Stock *</label><input name="stock" type="number" min="0" placeholder="100" required/></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal('addProd')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Add Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MODALS -->
+{% for p in products %}
+<div class="modal-overlay" id="edit_{{ p.product_id }}">
+  <div class="modal">
+    <h3><i class="fa-solid fa-pen"></i> Edit Product</h3>
+    <form method="POST" action="/products/update/{{ p.product_id }}">
+      <div class="fg"><label>Product Name *</label><input name="product_name" value="{{ p.product_name }}" required/></div>
+      <div class="fg"><label>Description</label><input name="description" value="{{ p.description or '' }}"/></div>
+      <div class="frow">
+        <div class="fg"><label>Price (₹) *</label><input name="price" type="number" step="0.01" value="{{ p.price }}" required/></div>
+        <div class="fg"><label>Stock *</label><input name="stock" type="number" value="{{ p.stock }}" required/></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeModal('edit_{{ p.product_id }}')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<script>
+function updateTotal(price, qty, id){
+  document.getElementById(id).value = '₹' + (price * parseInt(qty || 1)).toLocaleString('en-IN');
+}
+</script>
+{% endblock %}

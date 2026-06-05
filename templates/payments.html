@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Payments — E-Commerce Bazaar{% endblock %}
+{% block page_title %}{% if session.role=='admin' %}All Payments{% else %}My Payments{% endif %}{% endblock %}
+{% block content %}
+
+<!-- SUMMARY CARDS -->
+<div class="stat-grid" style="grid-template-columns:1fr 1fr;max-width:520px;margin-bottom:20px">
+  <div class="stat" style="--c:var(--green)">
+    <div class="lbl">Paid</div>
+    <div class="val" style="font-size:1.5rem">₹{{ "{:,.0f}".format(total_paid) }}</div>
+    <div class="ico" style="background:#d1fae5;color:var(--green)"><i class="fa-solid fa-check-circle"></i></div>
+  </div>
+  <div class="stat" style="--c:var(--crimson)">
+    <div class="lbl">Pending</div>
+    <div class="val" style="font-size:1.5rem">₹{{ "{:,.0f}".format(total_pending) }}</div>
+    <div class="ico" style="background:rgba(155,28,28,.1);color:var(--crimson)"><i class="fa-solid fa-clock"></i></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd">
+    <h2>
+      <i class="fa-solid fa-indian-rupee-sign"></i>
+      {% if session.role=='admin' %}All Payment Transactions{% else %}My Payment History{% endif %}
+      <span class="rec-count">({{ payments|length }} records)</span>
+    </h2>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Pay ID</th><th>#Order</th>
+          {% if session.role=='admin' %}<th>Customer</th><th>Email</th>{% endif %}
+          <th>Product</th><th>Amount (₹)</th>
+          <th>Method</th><th>Date</th><th>Status</th>
+          {% if session.role=='admin' %}<th>Update</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td class="mono">#{{ p.payment_id }}</td>
+          <td class="mono">#{{ p.order_id }}</td>
+          {% if session.role=='admin' %}
+          <td>
+            <div class="av-cell">
+              <div class="av">{{ p.user_name[0].upper() }}</div>
+              {{ p.user_name }}
+            </div>
+          </td>
+          <td style="color:var(--gray);font-size:.82rem">{{ p.email }}</td>
+          {% endif %}
+          <td>{{ p.product_name }}</td>
+          <td class="amt">₹{{ "{:,.0f}".format(p.amount) }}</td>
+          <td>
+            <span style="font-size:.8rem;background:var(--cream);padding:3px 9px;border-radius:6px;border:1px solid var(--border)">
+              {{ p.payment_method }}
+            </span>
+          </td>
+          <td style="color:var(--gray);font-size:.82rem">{{ p.payment_date[:16] }}</td>
+          <td><span class="badge b-{{ p.status_p|lower }}">{{ p.status_p }}</span></td>
+          {% if session.role=='admin' %}
+          <td>
+            <form method="POST" action="/payments/update/{{ p.payment_id }}" class="inline-form">
+              <select name="status_p">
+                {% for s in ['Paid','Pending','Failed','Refunded'] %}
+                <option value="{{ s }}" {% if s==p.status_p %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr class="empty">
+          <td colspan="{% if session.role=='admin' %}10{% else %}7{% endif %}">
+            No payment records found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

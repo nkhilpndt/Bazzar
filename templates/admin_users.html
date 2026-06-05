@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}All Users — E-Commerce Bazaar{% endblock %}
+{% block page_title %}Registered Users{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div class="card-hd">
+    <h2><i class="fa-solid fa-users"></i> All Registered Users <span class="rec-count">({{ users|length }} accounts)</span></h2>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th>
+          <th>Role</th><th>Total Orders</th><th>Total Spent (₹)</th><th>Registered At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="mono">#{{ u.user_id }}</td>
+          <td>
+            <div class="av-cell">
+              <div class="av"
+                   style="background:linear-gradient(135deg,
+                     {{ ['#9B1C1C','#1D4ED8','#15803D','#92400E','#5B21B6'][loop.index0 % 5] }},
+                     #C9961A)">
+                {{ u.user_name[0].upper() }}
+              </div>
+              <div>
+                <div style="font-weight:600">{{ u.user_name }}</div>
+              </div>
+            </div>
+          </td>
+          <td style="color:var(--gray);font-size:.83rem">{{ u.email }}</td>
+          <td>{{ u.phone or '—' }}</td>
+          <td>
+            <span class="badge {{ 'b-admin' if u.role=='admin' else 'b-user' }}">
+              {{ u.role }}
+            </span>
+          </td>
+          <td style="font-weight:600;text-align:center">{{ u.total_orders }}</td>
+          <td class="amt">₹{{ "{:,.0f}".format(u.total_spent) }}</td>
+          <td style="color:var(--gray);font-size:.82rem">{{ u.created_at[:16] }}</td>
+        </tr>
+        {% else %}
+        <tr class="empty"><td colspan="8">No users registered yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

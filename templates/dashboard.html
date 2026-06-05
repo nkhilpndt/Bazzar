@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — E-Commerce Bazaar{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+{% if session.role == 'admin' %}
+<!-- ── ADMIN DASHBOARD ── -->
+<div class="stat-grid">
+  <div class="stat" style="--c:var(--crimson)">
+    <div class="lbl">Registered Users</div>
+    <div class="val">{{ stats.users }}</div>
+    <div class="ico" style="background:rgba(155,28,28,.1);color:var(--crimson)"><i class="fa-solid fa-users"></i></div>
+  </div>
+  <div class="stat" style="--c:var(--gold)">
+    <div class="lbl">Total Products</div>
+    <div class="val">{{ stats.products }}</div>
+    <div class="ico" style="background:rgba(201,150,26,.12);color:var(--gold)"><i class="fa-solid fa-box-open"></i></div>
+  </div>
+  <div class="stat" style="--c:#1D4ED8">
+    <div class="lbl">Total Orders</div>
+    <div class="val">{{ stats.orders }}</div>
+    <div class="ico" style="background:#dbeafe;color:#1D4ED8"><i class="fa-solid fa-cart-shopping"></i></div>
+  </div>
+  <div class="stat" style="--c:var(--green)">
+    <div class="lbl">Revenue Collected</div>
+    <div class="val" style="font-size:1.5rem">₹{{ "{:,.0f}".format(stats.revenue) }}</div>
+    <div class="ico" style="background:#d1fae5;color:var(--green)"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd">
+    <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Orders <span class="rec-count">(latest 8)</span></h2>
+    <a href="/orders" class="btn btn-outline btn-sm">View All <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#Order</th><th>Customer</th><th>Product</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for r in recent %}
+        <tr>
+          <td class="mono">#{{ r.order_id }}</td>
+          <td><div class="av-cell"><div class="av">{{ r.user_name[0].upper() }}</div>{{ r.user_name }}</div></td>
+          <td>{{ r.product_name }}</td>
+          <td class="amt">₹{{ "{:,.0f}".format(r.total_amt) }}</td>
+          <td>{{ r.order_date[:16] }}</td>
+          <td><span class="badge b-{{ r.status|lower }}">{{ r.status }}</span></td>
+        </tr>
+        {% else %}<tr class="empty"><td colspan="6">No orders yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% else %}
+<!-- ── USER DASHBOARD ── -->
+<div class="stat-grid">
+  <div class="stat" style="--c:var(--crimson)">
+    <div class="lbl">My Orders</div>
+    <div class="val">{{ stats.orders }}</div>
+    <div class="ico" style="background:rgba(155,28,28,.1);color:var(--crimson)"><i class="fa-solid fa-cart-shopping"></i></div>
+  </div>
+  <div class="stat" style="--c:#EF4444">
+    <div class="lbl">Pending Orders</div>
+    <div class="val">{{ stats.pending }}</div>
+    <div class="ico" style="background:#fee2e2;color:#EF4444"><i class="fa-solid fa-clock"></i></div>
+  </div>
+  <div class="stat" style="--c:var(--green)">
+    <div class="lbl">Payments Done</div>
+    <div class="val">{{ stats.paid }}</div>
+    <div class="ico" style="background:#d1fae5;color:var(--green)"><i class="fa-solid fa-check-circle"></i></div>
+  </div>
+  <div class="stat" style="--c:var(--gold)">
+    <div class="lbl">Total Spent</div>
+    <div class="val" style="font-size:1.4rem">₹{{ "{:,.0f}".format(stats.spent) }}</div>
+    <div class="ico" style="background:rgba(201,150,26,.12);color:var(--gold)"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd">
+    <h2><i class="fa-solid fa-bag-shopping"></i> My Recent Orders</h2>
+    <div style="display:flex;gap:9px">
+      <a href="/products" class="btn btn-gold btn-sm"><i class="fa-solid fa-plus"></i> Shop Now</a>
+      <a href="/orders"   class="btn btn-outline btn-sm">All Orders</a>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#Order</th><th>Product</th><th>Qty</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for r in recent %}
+        <tr>
+          <td class="mono">#{{ r.order_id }}</td>
+          <td>{{ r.product_name }}</td>
+          <td>{{ r.quantity }}</td>
+          <td class="amt">₹{{ "{:,.0f}".format(r.total_amt) }}</td>
+          <td>{{ r.order_date[:16] }}</td>
+          <td><span class="badge b-{{ r.status|lower }}">{{ r.status }}</span></td>
+        </tr>
+        {% else %}<tr class="empty"><td colspan="6">No orders yet. <a href="/products" style="color:var(--crimson)">Browse products →</a></td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

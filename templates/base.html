@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>{% block title %}E-Commerce Bazaar{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+:root{
+  --crimson:#9B1C1C;--crimson-d:#7F1D1D;--crimson-lt:#EF4444;
+  --gold:#C9961A;--gold-lt:#F4C842;
+  --ivory:#FDFAF4;--cream:#F5EFE0;
+  --navy:#1A1A2E;--ink:#2D2D2D;
+  --gray:#6B7280;--border:#E8DFC8;
+  --green:#15803D;--green-lt:#D1FAE5;
+  --blue:#1D4ED8;--blue-lt:#DBEAFE;
+  --red-lt:#FEE2E2;
+  --sidebar:240px;--r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--ivory);color:var(--ink);display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar);min-height:100vh;
+  background:var(--navy);
+  position:fixed;top:0;left:0;z-index:100;
+  display:flex;flex-direction:column;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.sidebar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--crimson),var(--gold),var(--crimson));
+}
+.brand{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.brand-name{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#fff;line-height:1.1}
+.brand-name em{color:var(--gold-lt);font-style:normal}
+.brand-tag{font-size:.65rem;color:rgba(255,255,255,.35);letter-spacing:2.5px;text-transform:uppercase;margin-top:4px}
+.brand-user{
+  margin:14px 22px 0;padding:10px 14px;
+  background:rgba(255,255,255,.06);border-radius:9px;
+  font-size:.8rem;color:rgba(255,255,255,.75);
+  display:flex;align-items:center;gap:9px;
+}
+.brand-user .av{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--crimson),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.8rem;color:#fff;flex-shrink:0;
+}
+.brand-user .uname{font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-user .urole{font-size:.68rem;color:var(--gold-lt);text-transform:uppercase;letter-spacing:.8px}
+
+.nav-label{padding:18px 22px 6px;font-size:.62rem;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase}
+nav a{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 22px;color:rgba(255,255,255,.6);
+  text-decoration:none;font-size:.87rem;font-weight:500;
+  border-left:3px solid transparent;transition:.18s;
+}
+nav a i{width:16px;text-align:center;font-size:.88rem}
+nav a:hover,nav a.active{color:#fff;background:rgba(201,150,26,.12);border-left-color:var(--gold)}
+.sidebar-foot{
+  margin-top:auto;padding:16px 22px;
+  font-size:.7rem;color:rgba(255,255,255,.2);
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:#fff;padding:13px 30px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 13px;border-radius:99px;font-size:.75rem;font-weight:600;
+}
+.chip-gold{background:rgba(201,150,26,.12);color:var(--gold)}
+.chip-red {background:rgba(155,28,28,.1);color:var(--crimson)}
+
+/* ── FLASH ── */
+.flashes{padding:14px 30px 0}
+.flash{
+  padding:11px 16px;border-radius:9px;font-size:.86rem;font-weight:500;
+  margin-bottom:9px;display:flex;align-items:center;gap:9px;
+  animation:pop .25s ease;
+}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.flash.success{background:var(--green-lt);color:#14532d}
+.flash.error  {background:var(--red-lt);color:#7f1d1d}
+.flash.info   {background:var(--blue-lt);color:#1e3a8a}
+
+/* ── PAGE ── */
+.page{padding:26px 30px}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:24px}
+.stat{
+  background:#fff;border-radius:var(--r);padding:20px 22px;
+  border:1px solid var(--border);position:relative;overflow:hidden;
+}
+.stat::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--c,var(--crimson))}
+.stat .lbl{font-size:.72rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--gray)}
+.stat .val{font-family:'Cormorant Garamond',serif;font-size:1.85rem;color:var(--navy);margin-top:5px;line-height:1}
+.stat .ico{position:absolute;right:16px;top:16px;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:20px}
+.card-hd{
+  padding:16px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.card-hd h2{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--navy);display:flex;align-items:center;gap:9px}
+.card-hd h2 i{color:var(--crimson);font-size:.95rem}
+.rec-count{font-size:.78rem;color:var(--gray);font-family:'Outfit',sans-serif;font-weight:400}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.855rem}
+thead th{
+  background:var(--navy);color:rgba(255,255,255,.8);
+  padding:11px 15px;text-align:left;font-weight:500;
+  font-size:.75rem;letter-spacing:.5px;text-transform:uppercase;
+}
+tbody tr{border-bottom:1px solid #F3EDE0;transition:.12s}
+tbody tr:hover{background:rgba(201,150,26,.05)}
+tbody td{padding:11px 15px;vertical-align:middle}
+.mono{font-family:monospace;font-size:.8rem;color:var(--gray)}
+.amt{font-weight:700;color:var(--green)}
+.empty td{text-align:center;color:var(--gray);padding:32px!important;font-size:.9rem}
+
+/* ── STATUS BADGES ── */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:99px;font-size:.74rem;font-weight:600;
+}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.b-delivered,.b-paid     {background:#d1fae5;color:#065f46}
+.b-shipped               {background:#dbeafe;color:#1e40af}
+.b-processing            {background:#fef3c7;color:#92400e}
+.b-pending               {background:#fee2e2;color:#991b1b}
+.b-failed,.b-refunded    {background:#f3f4f6;color:#374151}
+.b-admin                 {background:rgba(155,28,28,.1);color:var(--crimson)}
+.b-user                  {background:rgba(201,150,26,.12);color:#92400e}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:.18s}
+.btn-primary{background:var(--crimson);color:#fff}
+.btn-primary:hover{background:var(--crimson-d);transform:translateY(-1px)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:#a87b10}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+.btn-outline:hover{background:var(--cream)}
+.btn-danger{background:var(--red-lt);color:#991b1b;border:none}
+.btn-danger:hover{background:#fca5a5}
+.btn-sm{padding:5px 11px;font-size:.78rem}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,46,.55);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .22s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--navy);margin-bottom:18px;display:flex;align-items:center;gap:9px}
+.modal h3 i{color:var(--crimson)}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.8rem;font-weight:600;color:var(--ink);margin-bottom:5px}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;
+  font-family:'Outfit',sans-serif;font-size:.87rem;background:var(--cream);
+  color:var(--ink);outline:none;transition:.18s;
+}
+.fg input:focus,.fg select:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,150,26,.12)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:20px}
+
+/* ── AVATAR CELL ── */
+.av-cell{display:flex;align-items:center;gap:9px}
+.av-cell .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--crimson),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.78rem;flex-shrink:0}
+
+/* ── INLINE SELECT ── */
+.inline-form{display:flex;gap:6px;align-items:center}
+.inline-form select{padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:'Outfit',sans-serif;font-size:.8rem;background:var(--cream)}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-name">E-Commerce <em>Bazaar</em></div>
+    <div class="brand-tag">DBMS Project</div>
+  </div>
+  {% if session.user_name %}
+  <div class="brand-user">
+    <div class="av">{{ session.user_name[0].upper() }}</div>
+    <div>
+      <div class="uname">{{ session.user_name }}</div>
+      <div class="urole">{{ session.role }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="nav-label">Navigation</div>
+  <nav>
+    <a href="/dashboard" class="{{ 'active' if request.endpoint=='dashboard' }}">
+      <i class="fa-solid fa-gauge-high"></i> Dashboard
+    </a>
+    <a href="/products" class="{{ 'active' if request.endpoint in ['products','add_product','update_product'] }}">
+      <i class="fa-solid fa-box-open"></i> Products
+    </a>
+    <a href="/orders" class="{{ 'active' if request.endpoint=='orders' }}">
+      <i class="fa-solid fa-cart-shopping"></i>
+      {% if session.role=='admin' %}All Orders{% else %}My Orders{% endif %}
+    </a>
+    <a href="/payments" class="{{ 'active' if request.endpoint=='payments' }}">
+      <i class="fa-solid fa-indian-rupee-sign"></i>
+      {% if session.role=='admin' %}All Payments{% else %}My Payments{% endif %}
+    </a>
+    {% if session.role=='admin' %}
+    <div class="nav-label">Admin</div>
+    <a href="/admin/users" class="{{ 'active' if request.endpoint=='admin_users' }}">
+      <i class="fa-solid fa-users"></i> All Users
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="nav-label">Account</div>
+  <nav>
+    <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </nav>
+
+  <div class="sidebar-foot">E-Commerce Bazaar · Python + SQLite</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+    <div class="topbar-right">
+      <span class="chip chip-gold"><i class="fa-solid fa-indian-rupee-sign"></i> INR</span>
+      {% if session.role=='admin' %}<span class="chip chip-red"><i class="fa-solid fa-shield"></i> Admin</span>{% endif %}
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flashes">
+    {% for c,m in messages %}
+    <div class="flash {{ c }}">
+      <i class="fa-solid {{ 'fa-check-circle' if c=='success' else 'fa-circle-info' if c=='info' else 'fa-exclamation-circle' }}"></i>{{ m }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <div class="page">{% block content %}{% endblock %}</div>
+</div>
+
+<script>
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'))})
+</script>
+</body>
+</html>

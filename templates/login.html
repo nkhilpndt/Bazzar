@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Login — E-Commerce Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--crimson:#9B1C1C;--gold:#C9961A;--gold-lt:#F4C842;--navy:#1A1A2E;--ivory:#FDFAF4;--cream:#F5EFE0;--border:#E8DFC8}
+body{font-family:'Outfit',sans-serif;min-height:100vh;display:flex;background:var(--ivory)}
+
+.left{
+  width:420px;flex-shrink:0;
+  background:var(--navy);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 50px;position:relative;overflow:hidden;
+}
+.left::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,150,26,.2),transparent 70%);
+}
+.left::after{
+  content:'';position:absolute;bottom:-60px;left:-60px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(155,28,28,.25),transparent 70%);
+}
+.left-content{position:relative;z-index:1}
+.app-name{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:#fff;line-height:1.1}
+.app-name em{color:var(--gold-lt);font-style:normal}
+.app-sub{font-size:.85rem;color:rgba(255,255,255,.45);margin-top:10px;line-height:1.6}
+.divider-line{width:48px;height:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));border-radius:99px;margin:24px 0}
+.feature{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:rgba(255,255,255,.65);font-size:.87rem}
+.feature i{color:var(--gold-lt);width:18px}
+
+.right{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+.box{width:100%;max-width:380px}
+.box-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--navy);margin-bottom:6px}
+.box-sub{font-size:.85rem;color:#6B7280;margin-bottom:28px}
+
+.flash{padding:10px 14px;border-radius:8px;font-size:.84rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.flash.success{background:#d1fae5;color:#065f46}
+.flash.info   {background:#dbeafe;color:#1e40af}
+.err-box{background:#fee2e2;color:#991b1b;padding:10px 14px;border-radius:8px;font-size:.84rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:5px}
+.fg input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.9rem;background:var(--cream);outline:none;transition:.18s}
+.fg input:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,150,26,.12)}
+.input-icon{position:relative}
+.input-icon i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#9CA3AF;font-size:.9rem}
+.input-icon input{padding-left:38px}
+
+.btn-login{
+  width:100%;padding:12px;border:none;border-radius:9px;
+  background:var(--crimson);color:#fff;
+  font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;
+  cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login:hover{background:#7F1D1D;transform:translateY(-1px)}
+
+.link-row{text-align:center;margin-top:20px;font-size:.85rem;color:#6B7280}
+.link-row a{color:var(--crimson);font-weight:600;text-decoration:none}
+.link-row a:hover{text-decoration:underline}
+
+.admin-hint{
+  margin-top:24px;padding:12px 16px;background:var(--cream);
+  border-radius:9px;border:1px solid var(--border);font-size:.8rem;color:#6B7280;
+}
+.admin-hint strong{color:var(--navy)}
+</style>
+</head>
+<body>
+
+<div class="left">
+  <div class="left-content">
+    <div class="app-name">E-Commerce<br/><em>Bazaar</em></div>
+    <div class="app-sub">Your complete online shopping platform with full order & payment management.</div>
+    <div class="divider-line"></div>
+    <div class="feature"><i class="fa-solid fa-user-shield"></i> Secure login for every user</div>
+    <div class="feature"><i class="fa-solid fa-box-open"></i> Browse & order products</div>
+    <div class="feature"><i class="fa-solid fa-clock-rotate-left"></i> Track your order history</div>
+    <div class="feature"><i class="fa-solid fa-indian-rupee-sign"></i> Payments in Indian Rupee</div>
+  </div>
+</div>
+
+<div class="right">
+  <div class="box">
+    <div class="box-title">Welcome Back</div>
+    <div class="box-sub">Sign in to your account</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for c,m in messages %}<div class="flash {{ c }}"><i class="fa-solid fa-circle-check"></i>{{ m }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+
+    {% if err %}<div class="err-box"><i class="fa-solid fa-exclamation-circle"></i>{{ err }}</div>{% endif %}
+
+    <form method="POST">
+      <div class="fg">
+        <label>Email Address</label>
+        <div class="input-icon">
+          <i class="fa-solid fa-envelope"></i>
+          <input name="email" type="email" placeholder="you@example.com" required/>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Password</label>
+        <div class="input-icon">
+          <i class="fa-solid fa-lock"></i>
+          <input name="password" type="password" placeholder="••••••••" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn-login">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </button>
+    </form>
+
+    <div class="link-row">Don't have an account? <a href="/register">Register here</a></div>
+
+    <div class="admin-hint">
+      <strong>Admin Login:</strong> admin@bazaar.com &nbsp;/&nbsp; admin123
+    </div>
+  </div>
+</div>
+</body>
+</html>
